@@ -1,0 +1,21 @@
+#! /bin/bash
+
+mkdir "$HOME/.cygnus"
+cygnusPath="$_"
+mkdir "${cygnusPath}/templates"
+
+cp .cygnus-project/cygnus /usr/local/bin/
+cp .cygnus-project/cygnus-base/.help $cygnusPath
+cp -r .cygnus-project/cygnus-base/templates/* $cygnusPath/templates
+
+export PATH="/usr/local/bin:$PATH"
+
+bell=`tput bel`
+bold=`tput bold`
+reset=`tput sgr 0`
+yellow=`tput setaf 3`
+
+echo ""
+echo "${bell}${yellow}${bold}Cygnus successfully installed!${reset}"
+echo ""
+cygnus -h

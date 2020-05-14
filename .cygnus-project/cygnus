@@ -1,0 +1,144 @@
+#! /bin/bash
+
+#Text colors
+red=`tput setaf 1`
+green=`tput setaf 2`
+yellow=`tput setaf 3`
+
+#Text mode commands
+bold=`tput bold`
+underline=`tput smul`
+removeUnderline=`tput rmul`
+standout=`tput smso`
+exitStandout=`tput rmso`
+reset=`tput sgr 0`
+bell=`tput bel`
+
+userAction=$1
+userElement=$2
+
+#create new project
+createProject () {
+  # set project's name
+  echo ""
+  read -p "${yellow}${underline}Enter project's name${removeUnderline}: ${reset}" projectName
+
+  #Script begin
+  echo ""
+  echo "${yellow}${bold}Creating ${projectName}"
+  echo ""
+
+  mkdir "${projectName}" 
+  projectPath="$_"
+
+  touch "${projectName}/.cygnus"
+
+  mkdir "${projectPath}/src"
+  projectSrcPath="$_"
+
+  # create root folder files
+  cp "$HOME/.cygnus/templates/project/package.json" "${projectPath}/"
+  eval `sed -i '' "s/cygnus-base-project/${projectName}/g" ${projectPath}/package.json`
+  cp "$HOME/.cygnus/templates/project/tsconfig.json" "${projectPath}/"
+  cp "$HOME/.cygnus/templates/project/.env" "${projectPath}/"
+
+  # create application layer folder and files
+  mkdir "${projectSrcPath}/application"
+  projectApplicationLayerPath="$_"
+
+  cp "$HOME/.cygnus/templates/project/server.ts" "${projectApplicationLayerPath}"
+  cp -r "$HOME/.cygnus/templates/project/interfaces" "${projectApplicationLayerPath}"
+  cp -r "$HOME/.cygnus/templates/project/middlewares" "${projectApplicationLayerPath}"
+
+  mkdir "${projectApplicationLayerPath}/controllers"
+  mkdir "${projectApplicationLayerPath}/models"
+  mkdir "${projectApplicationLayerPath}/services"
+
+  #create domain layer folders
+  mkdir "${projectSrcPath}/domain"
+  projectDomainLayerPath="$_"
+
+  mkdir "${projectDomainLayerPath}/models"
+  mkdir "${projectDomainLayerPath}/repositories"
+  mkdir "${projectDomainLayerPath}/services"
+  mkdir "${projectDomainLayerPath}/usecases"
+
+  # create infrastructure layer folders
+  mkdir "${projectSrcPath}/infrastructure"
+  projectInfrastructureLayerPath="$_"
+
+  mkdir "${projectInfrastructureLayerPath}/models"
+  mkdir "${projectInfrastructureLayerPath}/repositories"
+  mkdir "${projectInfrastructureLayerPath}/services"
+
+  cp "$HOME/.cygnus/templates/project/index.ts" "${projectSrcPath}/"
+
+  #output project's structure
+  echo ""
+	find $projectPath | sed -e " s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/" -e "s/\([a-zA-Z._*-]\)/${bold}${green}&${reset}/g"
+  echo ""
+  echo ""
+  echo "${bold}${green}${standout}Instructions to run your project: ${reset}"
+  echo ""
+  echo "${yellow}Run: ${green}npm i${reset}"
+  echo "${yellow}Then start project with: ${green}npm run start-dev${reset}"
+  echo ""
+}
+
+createController () {
+  # set controller's name
+  echo ""
+  read -p "${yellow}${underline}Enter camel case controller's name${removeUnderline}: ${reset}" controllerName
+  
+  applicationLayerPath="src/application"
+  controllersPath="${applicationLayerPath}/controllers"
+  formattedControllerName=`echo "${controllerName}" | sed "s/\(.\)\([A-Z]\)/\1-\2/g" | tr "[:upper:]" "[:lower:]"`
+  echo $formattedControllerName
+
+  # copy template file to project's path
+  cp "$HOME/.cygnus/templates/files/controller.ts" "${controllersPath}/${formattedControllerName}.controller.ts"
+  eval `sed -i '' "s/BaseController/${controllerName}Controller/g" ${controllersPath}/${formattedControllerName}.controller.ts`
+
+  # update controllers list at server file
+  eval `grep -q "\[[a-zA-Z]" ${applicationLayerPath}/server.ts && sed -i '' "s/\]/, ${controllerName}Controller\]/g" ${applicationLayerPath}/server.ts`
+  eval `grep -q "\[\]" ${applicationLayerPath}/server.ts && sed -i '' "s/\]/${controllerName}Controller\]/g" ${applicationLayerPath}/server.ts`
+  
+  newControllerImportStatement="import \{ ${controllerName}Controller \} from \'\.\/controllers\/${formattedControllerName}\.controller\'"
+  eval `sed -i '' '1,/^$/s/^$/importstatement\'$'\n/g' ${applicationLayerPath}/server.ts && sed -i '' "s/importstatement/${newControllerImportStatement}/g" ${applicationLayerPath}/server.ts`
+  
+  echo "${yellow}${bold}${controllerName} controller created!${reset}"
+}
+
+if [ $userAction == 'new' ]
+then
+  if [ $userElement == 'project' ]
+  then
+    createProject
+    exit 1
+  else
+    echo "${red}${bold}Invalid option, please enter -h to get help!${reset}"
+    exit 1
+  fi
+elif [ $userAction == 'create' ]
+then
+  if [ ! -f '.cygnus' ]
+  then
+    echo "Invalid project path, please move to a valid Cygnus project root path"
+  else
+    if [ $userElement == 'controller' ]
+    then
+      createController
+      exit 1
+    else
+      echo "${red}${bold}Invalid option, plase enter -h to get help!${reset}"
+      exit 1
+    fi
+  fi
+elif [[ $userAction == "-h" || $userAction == "--help" ]]
+then
+  eval "sh ${HOME}/.cygnus/.help"
+  exit 1
+else
+  echo "${red}${bold}Invalid cygnus option${reset}"
+  exit 1
+fi

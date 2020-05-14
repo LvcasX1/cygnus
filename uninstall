@@ -1,0 +1,13 @@
+#! /bin/bash
+
+rm /usr/local/bin/cygnus
+rm -r $HOME/.cygnus
+
+yellow=`tput setaf 3`
+bold=`tput bold`
+reset=`tput sgr 0`
+bell=`tput bel`
+
+echo ""
+echo "${bell}${yellow}${bold}Cygnus successfully uninstalled${reset}"
+echo ""
