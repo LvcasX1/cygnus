@@ -2,9 +2,9 @@ import Koa from 'koa'
 import 'reflect-metadata'
 import { createKoaServer } from 'routing-controllers'
 import logger from './interfaces/tools/logger'
-import config from '../application/interfaces/tools/config/config'
+import config from './interfaces/tools/config/config'
 
-export interface AdapterPOC extends Koa {
+export interface Cygnus extends Koa {
   boot: () => void
   init: () => void
 }
