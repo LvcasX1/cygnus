@@ -1,14 +1,15 @@
-import logger from './application/interfaces/tools/logger'
 import app from './application/server'
+import logger from './application/interfaces/tools/logger'
 
 process.on('uncaughtException', (e: Error): void => {
-  logger.error('Uncaught Exception: ', e)
+  logger.logError('Uncaugth Exception', e)
 })
 
 process.on('unhandledRejection', (reason, p): void => {
-  logger.error('Unhandled Rejection.')
-  logger.debug('Promise', p)
-  logger.debug('Reason: ', reason)
+  logger.logError('Unhandled Rejection', {
+    promise: JSON.parse(JSON.stringify(p)),
+    reason,
+  })
 })
 
 app.on('application:booted', app.init)

@@ -1,18 +1,32 @@
-import { Middleware } from 'koa'
+import { AbstractError, metaError } from '../../interfaces/tools/errors'
+import { Ctx, KoaMiddlewareInterface, Middleware } from 'routing-controllers'
+import { Context } from 'koa'
 import logger from '../../interfaces/tools/logger'
+import store from '../../interfaces/tools/store'
 
-const errorsHandler: Middleware = async (ctx, next): Promise<void> => {
-  try {
-    await next()
-  } catch (error) {
-    logger.error('Error found')
-    logger.error('The error says: ' + error.message)
-    logger.error('Full info: ' + error.stack)
-    logger.error(JSON.stringify(error))
-    ctx.status = error.meta ? error.meta.code : error.status || 500
-    ctx.body = { message: 'Ha ocurrido un error interno' }
-    ctx.app.emit('error', ctx)
+const parseError = (error: Error): AbstractError => {
+  if (!(error instanceof AbstractError)) {
+    return new AbstractError('Ha ocurrido un error interno', metaError(error))
   }
+
+  return error as AbstractError
 }
 
-export default errorsHandler
+@Middleware({ type: 'before' })
+export class ErrorHandlerMiddleware implements KoaMiddlewareInterface {
+  public async use(@Ctx() ctx: Context, next: (err?: Error) => Promise<Error>): Promise<void> {
+    try {
+      await next()
+    } catch (error) {
+      const parsedError = parseError(error)
+      const traceID = store.getContext().traceID
+      const { message, metaData } = parsedError.toJSON()
+      logger.logError(message, metaData)
+      ctx.status = parsedError.getStatus()
+      ctx.body = {
+        message,
+        traceID,
+      }
+    }
+  }
+}
