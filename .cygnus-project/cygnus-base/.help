@@ -15,7 +15,7 @@ reset=`tput sgr 0`
 bell=`tput bel`
 
 echo ""
-echo "Usage: ${green}cygnus ${yellow}[create] [new] [project] [controller]"
+echo "Usage: ${green}cygnus ${yellow}[ create | new ] [ project | controller ]"
 echo ""
 echo "${yellos}new \t${reset}Option to create a new koa base project, it will prompt a question for project's name"
 echo "${yellow}create \t${reset}Option to create a new controller, it will prompt a question for controller's name"

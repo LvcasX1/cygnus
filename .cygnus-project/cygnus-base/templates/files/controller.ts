@@ -10,7 +10,7 @@ export class BaseController {
   @Post('/')
   public async post(
     @Body() body: any 
-  ): any {
+  ): Promise<any> {
     
   }
 }

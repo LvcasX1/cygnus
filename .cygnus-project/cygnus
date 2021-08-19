@@ -96,16 +96,17 @@ createController () {
   echo $formattedControllerName
 
   # copy template file to project's path
-  cp "$HOME/.cygnus/templates/files/controller.ts" "${controllersPath}/${formattedControllerName}.controller.ts"
-  eval `sed -i '' "s/BaseController/${controllerName}Controller/g" ${controllersPath}/${formattedControllerName}.controller.ts`
+  mkdir "${controllersPath}/${formattedControllerName}"
+  cp "$HOME/.cygnus/templates/files/controller.ts" "${controllersPath}/${formattedControllerName}/${formattedControllerName}.controller.ts"
+  eval `sed -i '' "s/BaseController/${controllerName}Controller/g" ${controllersPath}/${formattedControllerName}/${formattedControllerName}.controller.ts`
 
-  # update controllers list at server file
-  eval `grep -q "\[[a-zA-Z]" ${applicationLayerPath}/server.ts && sed -i '' "s/\]/, ${controllerName}Controller\]/g" ${applicationLayerPath}/server.ts`
-  eval `grep -q "\[\]" ${applicationLayerPath}/server.ts && sed -i '' "s/\]/${controllerName}Controller\]/g" ${applicationLayerPath}/server.ts`
-  
-  newControllerImportStatement="import \{ ${controllerName}Controller \} from \'\.\/controllers\/${formattedControllerName}\.controller\'"
-  eval `sed -i '' '1,/^$/s/^$/importstatement\'$'\n/g' ${applicationLayerPath}/server.ts && sed -i '' "s/importstatement/${newControllerImportStatement}/g" ${applicationLayerPath}/server.ts`
-  
+  # update controllers list at controllers index file
+  eval `grep -q "\[[a-zA-Z]" ${applicationLayerPath}/controllers/index.ts && sed -i '' "s/\]/, ${controllerName}Controller\]/g" ${applicationLayerPath}/controllers/index.ts`
+  eval `grep -q "\[\]" ${applicationLayerPath}/controllers/index.ts && sed -i '' "s/\]/${controllerName}Controller\]/g" ${applicationLayerPath}/controllers/index.ts`
+
+  newControllerImportStatement="import \{ ${controllerName}Controller \} from \'\.\/${formattedControllerName}\/${formattedControllerName}\.controller\'"
+  eval `sed -i '' '1,/^$/s/^$/importstatement\'$'\n/g' ${applicationLayerPath}/controllers/index.ts && sed -i '' "s/importstatement/${newControllerImportStatement}/g" ${applicationLayerPath}/controllers/index.ts`
+
   echo "${yellow}${bold}${controllerName} controller created!${reset}"
 }
 
