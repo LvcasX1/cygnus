@@ -11,16 +11,6 @@ export class CorrelationalIdMiddleware implements KoaMiddlewareInterface {
     const correlationalId = ctx.get(correlationalIdHeaderName) || uuid.v4()
     ctx.set(correlationalIdHeaderName, correlationalId)
 
-    const channel = ctx.request.header.channel || 'EMPTY'
-    const flow = ctx.request.header.flow || 'EMPTY'
-
-    await store.withContext(
-      {
-        traceID: correlationalId,
-        flow,
-        channel,
-      },
-      next,
-    )
+    await store.withContext({ traceID: correlationalId }, next)
   }
 }

@@ -11,7 +11,7 @@ describe('Correlational Id Middeware', (): void => {
     logger.unmute()
   })
 
-  it('should set x-trace-id header on response after call', async (done): Promise<void> => {
+  it('should set x-correlational-id header on response after call', async (done): Promise<void> => {
     const mockedContext = createMockContext()
 
     await new CorrelationalIdMiddleware().use(mockedContext, jest.fn())

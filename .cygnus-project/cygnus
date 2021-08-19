@@ -23,7 +23,6 @@ createProject () {
   echo ""
   read -p "${yellow}${underline}Enter project's name${removeUnderline}: ${reset}" projectName
 
-  #Script begin
   echo ""
   echo "${yellow}${bold}Creating ${projectName}"
   echo ""
@@ -49,16 +48,17 @@ createProject () {
   cp "$HOME/.cygnus/templates/project/server.ts" "${projectApplicationLayerPath}"
   cp -r "$HOME/.cygnus/templates/project/interfaces" "${projectApplicationLayerPath}"
   cp -r "$HOME/.cygnus/templates/project/middlewares" "${projectApplicationLayerPath}"
+  cp -r "$HOME/.cygnus/templates/project/controllers" "${projectApplicationLayerPath}"
+  cp -r "$HOME/.cygnus/templates/project/services" "${projectApplicationLayerPath}"
 
-  mkdir "${projectApplicationLayerPath}/controllers"
   mkdir "${projectApplicationLayerPath}/models"
-  mkdir "${projectApplicationLayerPath}/services"
 
-  #create domain layer folders
+  # create domain layer folders
   mkdir "${projectSrcPath}/domain"
   projectDomainLayerPath="$_"
 
-  mkdir "${projectDomainLayerPath}/models"
+  cp -r "$HOME/.cygnus/templates/project/models" "${projectDomainLayerPath}"
+
   mkdir "${projectDomainLayerPath}/repositories"
   mkdir "${projectDomainLayerPath}/services"
   mkdir "${projectDomainLayerPath}/usecases"
@@ -73,7 +73,7 @@ createProject () {
 
   cp "$HOME/.cygnus/templates/project/index.ts" "${projectSrcPath}/"
 
-  #output project's structure
+  # output project's structure
   echo ""
 	find $projectPath | sed -e " s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/" -e "s/\([a-zA-Z._*-]\)/${bold}${green}&${reset}/g"
   echo ""

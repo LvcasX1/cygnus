@@ -1,4 +1,4 @@
-import { Health } from '../../../domain/model/health.model'
+import { Health } from '../../../domain/models/health.model'
 
 export default abstract class HealthService {
   public static execute(): Health {
