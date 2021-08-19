@@ -23,66 +23,73 @@ createProject () {
   echo ""
   read -p "${yellow}${underline}Enter project's name${removeUnderline}: ${reset}" projectName
 
-  echo ""
-  echo "${yellow}${bold}Creating ${projectName}"
-  echo ""
+  if [ -d "${projectName}" ]
+  then
+    echo "${red}${bold}A project with that name already exists! Please choose another name${reset}"
+    exit 1
+  else
 
-  mkdir "${projectName}" 
-  projectPath="$_"
+    echo ""
+    echo "${yellow}${bold}Creating ${projectName}"
+    echo ""
+ 
+    mkdir "${projectName}" 
+    projectPath="$_"
 
-  touch "${projectName}/.cygnus"
+    touch "${projectName}/.cygnus"
 
-  mkdir "${projectPath}/src"
-  projectSrcPath="$_"
+    mkdir "${projectPath}/src"
+    projectSrcPath="$_"
 
-  # create root folder files
-  cp "$HOME/.cygnus/templates/project/package.json" "${projectPath}/"
-  eval `sed -i '' "s/cygnus-base-project/${projectName}/g" ${projectPath}/package.json`
-  cp "$HOME/.cygnus/templates/project/tsconfig.json" "${projectPath}/"
-  cp "$HOME/.cygnus/templates/project/.env" "${projectPath}/"
+    # create root folder files
+    cp "$HOME/.cygnus/templates/project/package.json" "${projectPath}/"
+    eval `sed -i '' "s/cygnus-base-project/${projectName}/g" ${projectPath}/package.json`
+    cp "$HOME/.cygnus/templates/project/tsconfig.json" "${projectPath}/"
+    cp "$HOME/.cygnus/templates/project/.env" "${projectPath}/"
 
-  # create application layer folder and files
-  mkdir "${projectSrcPath}/application"
-  projectApplicationLayerPath="$_"
+    # create application layer folder and files
+    mkdir "${projectSrcPath}/application"
+    projectApplicationLayerPath="$_"
 
-  cp "$HOME/.cygnus/templates/project/server.ts" "${projectApplicationLayerPath}"
-  cp -r "$HOME/.cygnus/templates/project/interfaces" "${projectApplicationLayerPath}"
-  cp -r "$HOME/.cygnus/templates/project/middlewares" "${projectApplicationLayerPath}"
-  cp -r "$HOME/.cygnus/templates/project/controllers" "${projectApplicationLayerPath}"
-  cp -r "$HOME/.cygnus/templates/project/services" "${projectApplicationLayerPath}"
+    cp "$HOME/.cygnus/templates/project/server.ts" "${projectApplicationLayerPath}"
+    cp -r "$HOME/.cygnus/templates/project/interfaces" "${projectApplicationLayerPath}"
+    cp -r "$HOME/.cygnus/templates/project/middlewares" "${projectApplicationLayerPath}"
+    cp -r "$HOME/.cygnus/templates/project/controllers" "${projectApplicationLayerPath}"
+    cp -r "$HOME/.cygnus/templates/project/services" "${projectApplicationLayerPath}"
 
-  mkdir "${projectApplicationLayerPath}/models"
+    mkdir "${projectApplicationLayerPath}/models"
 
-  # create domain layer folders
-  mkdir "${projectSrcPath}/domain"
-  projectDomainLayerPath="$_"
+    # create domain layer folders
+    mkdir "${projectSrcPath}/domain"
+    projectDomainLayerPath="$_"
 
-  cp -r "$HOME/.cygnus/templates/project/models" "${projectDomainLayerPath}"
+    cp -r "$HOME/.cygnus/templates/project/models" "${projectDomainLayerPath}"
 
-  mkdir "${projectDomainLayerPath}/repositories"
-  mkdir "${projectDomainLayerPath}/services"
-  mkdir "${projectDomainLayerPath}/usecases"
+    mkdir "${projectDomainLayerPath}/repositories"
+    mkdir "${projectDomainLayerPath}/services"
+    mkdir "${projectDomainLayerPath}/usecases"
 
-  # create infrastructure layer folders
-  mkdir "${projectSrcPath}/infrastructure"
-  projectInfrastructureLayerPath="$_"
+    # create infrastructure layer folders
+    mkdir "${projectSrcPath}/infrastructure"
+    projectInfrastructureLayerPath="$_"
 
-  mkdir "${projectInfrastructureLayerPath}/models"
-  mkdir "${projectInfrastructureLayerPath}/repositories"
-  mkdir "${projectInfrastructureLayerPath}/services"
+    mkdir "${projectInfrastructureLayerPath}/models"
+    mkdir "${projectInfrastructureLayerPath}/repositories"
+    mkdir "${projectInfrastructureLayerPath}/services"
 
-  cp "$HOME/.cygnus/templates/project/index.ts" "${projectSrcPath}/"
+    cp "$HOME/.cygnus/templates/project/index.ts" "${projectSrcPath}/"
 
-  # output project's structure
-  echo ""
-	find $projectPath | sed -e " s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/" -e "s/\([a-zA-Z._*-]\)/${bold}${green}&${reset}/g"
-  echo ""
-  echo ""
-  echo "${bold}${green}${standout}Instructions to run your project: ${reset}"
-  echo ""
-  echo "${yellow}Run: ${green}npm i${reset}"
-  echo "${yellow}Then start project with: ${green}npm run start-dev${reset}"
-  echo ""
+    # output project's structure
+    echo ""
+    find $projectPath | sed -e " s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/" -e "s/\([a-zA-Z._*-]\)/${bold}${green}&${reset}/g"
+    echo ""
+    echo ""
+    echo "${bold}${green}${standout}Instructions to run your project: ${reset}"
+    echo ""
+    echo "${yellow}Run: ${green}npm i${reset}"
+    echo "${yellow}Then start project with: ${green}npm run start-dev${reset}"
+    echo ""
+  fi
 }
 
 createController () {
