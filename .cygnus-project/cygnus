@@ -54,7 +54,7 @@ createProject () {
 
 createController () {
   # set controller's name
-  echo ""
+  echo
   read -p "${yellow}${underline}Enter camel case controller's name${removeUnderline}: ${reset}" controllerName
   
   applicationLayerPath="src/application"
