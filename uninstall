@@ -8,6 +8,4 @@ bold=`tput bold`
 reset=`tput sgr 0`
 bell=`tput bel`
 
-echo ""
-echo "${bell}${yellow}${bold}Cygnus successfully uninstalled${reset}"
-echo ""
+printf "\n${bell}${yellow}${bold}Cygnus successfully uninstalled${reset}\n\n"
